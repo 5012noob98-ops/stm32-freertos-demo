@@ -1,0 +1,39 @@
+# Keil / MDK build files
+*.axf
+*.o
+*.d
+*.map
+*.lst
+*.crf
+*.htm
+*.hex
+*.sct
+*.bin
+
+# CubeMX generated build folders
+Debug/
+Release/
+build/
+
+# VSCode settings (只保留可共享的配置)
+.vscode/
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# 临时/备份文件
+*.bak
+*.swp
+*.tmp
+*.log
+
+# Git merge 冲突遗留文件
+*.orig
+
+# Keil 用户设置文件
+*.uvguix.*
+*.uvoptx
+
+# STM32CubeIDE workspace 文件
+*.launch
+.settings/

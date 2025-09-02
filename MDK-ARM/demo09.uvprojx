@@ -10,6 +10,7 @@
       <TargetName>demo09</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
+      <pCCUsed>5060750::V5.06 update 6 (build 750)::ARMCC</pCCUsed>
       <uAC6>0</uAC6>
       <TargetOption>
         <TargetCommonOption>
@@ -425,6 +426,26 @@
               <FileName>stm32f1xx_hal_timebase_tim.c</FileName>
               <FileType>1</FileType>
               <FilePath>../Core/Src/stm32f1xx_hal_timebase_tim.c</FilePath>
+            </File>
+            <File>
+              <FileName>led.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\led.c</FilePath>
+            </File>
+            <File>
+              <FileName>led_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\led_task.c</FilePath>
+            </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\key.c</FilePath>
+            </File>
+            <File>
+              <FileName>key_task.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\Core\Src\key_task.c</FilePath>
             </File>
           </Files>
         </Group>

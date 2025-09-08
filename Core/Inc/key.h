@@ -7,6 +7,7 @@
 #include <stdio.h>
 #include "led.h"
 #include "led_task.h"
+#include "log.h"
 
 /**
  * @brief °´¼ü×´Ì¬Ã¶¾Ù

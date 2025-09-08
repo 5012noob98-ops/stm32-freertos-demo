@@ -10,23 +10,20 @@ static TaskHandle_t KeyTaskHandle = NULL;
 QueueHandle_t xLedQueue;
 
 
-
-
-
 void key_task_init(void){
     
     xLedQueue = xQueueCreate(5, sizeof(LED_Event_t));
 
     BaseType_t xReturned;
     xReturned = xTaskCreate(  Key_Scan_Task,
-                "Key_task",
+                "Key_task1",
                 128,
                 NULL,
                 1,
                 &KeyTaskHandle);
     if (xReturned == pdPASS)
     {
-        printf("[KEY] 任务3创建成功!\r\n");      
+        LOG_INFO("[KEY] 任务3创建成功!\r\n");      
     }
 }
 

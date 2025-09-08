@@ -90,7 +90,7 @@ static void state_handler_wait(void)
 {
 
     if (HAL_GPIO_ReadPin(GPIOC, KEY1_Pin) == RESET && HAL_GPIO_ReadPin(GPIOC, KEY2_Pin) == RESET) {
-        printf("按键1\r\n");
+        LOG_INFO("按键1\r\n");
         current_key_state = KEY_STATE_CONFIG_WAIT;
         last_tick_time = xTaskGetTickCount();
     }
@@ -115,13 +115,13 @@ static void state_handler_short_press(void)
             if (short_press_count >= 2)
             {
                 current_key_state = KEY_STATE_DOUBLE_WAIT;
-                printf("进入双击模式\n");
+                LOG_INFO("进入双击模式\n");
             }else
             {
                 last_click_time = xTaskGetTickCount();
                 short_or_quick_mode = (LED_MODE_t)((g_led_mode + 1)% 4);
                 KeyEvent_SendMode(short_or_quick_mode);
-                printf("KEY1短按,切换LED灯\r\n");
+                LOG_INFO("KEY1短按,切换LED灯\r\n");
                 if (HAL_GPIO_ReadPin(GPIOC,KEY1_Pin) == SET)
                 {
                     current_key_state = KEY_STATE_WAIT;
@@ -142,7 +142,7 @@ static void state_handler_long_press(void)
 {
     KeyEvent_SendMode(LED_MODE_OFF);
     if (HAL_GPIO_ReadPin(GPIOC, KEY1_Pin) == SET) {
-        printf("长按结束\r\n");
+        LOG_INFO("长按结束\r\n");
         current_key_state = KEY_STATE_WAIT;
     }
 }
@@ -159,7 +159,7 @@ static void state_handler_double_wait(void)
         short_press_count++;
         short_or_quick_mode = (LED_MODE_t)((g_led_mode + 1)% 4);
         KeyEvent_SendMode(short_or_quick_mode);
-        printf("超时,不是双击,切换LED灯\r\n");
+        LOG_INFO("超时,不是双击,切换LED灯\r\n");
         if (HAL_GPIO_ReadPin(GPIOC,KEY1_Pin) == SET)
         {
             current_key_state = KEY_STATE_WAIT;
@@ -168,7 +168,7 @@ static void state_handler_double_wait(void)
         // 未超时，确认双击，进入闪烁状态
         short_press_count = 0;
         KeyEvent_SendMode(LED_MODE_OFF);
-        printf("进入闪烁状态\r\n");
+        LOG_INFO("进入闪烁状态\r\n");
         current_key_state = KEY_STATE_BLINKING;
     }
 }
@@ -197,7 +197,7 @@ static void state_handler_config_wait(void)
             // 按下3秒，进入配置模式
             KeyEvent_SendMode(LED_MODE_OFF);
             current_key_state = KEY_STATE_CONFIG_MODE;
-            printf("key1和key2按下3s,进入配置模式\r\n");
+            LOG_INFO("key1和key2按下3s,进入配置模式\r\n");
         }
     } else {
         // 双键释放，未达到配置时间，返回初始状态
@@ -244,7 +244,7 @@ static void state_handler_key1_add(void)
         if (TIME_AFTER(xTaskGetTickCount(), last_tick_time, 20)) {
             uint32_t new_freq = get_led_tim() + 50;
             KeyEvent_SendFreq(new_freq);
-            printf("LED_TIM + 50 = %lu\n", get_led_tim());
+            LOG_INFO("LED_TIM + 50 = %lu\n", get_led_tim());
         }
         current_key_state = KEY_STATE_CONFIG_MODE;
     }
@@ -261,7 +261,7 @@ static void state_handler_key2_config(void)
         // 短按进入减少模式
         if (TIME_AFTER(xTaskGetTickCount(), last_tick_time, 20) && !TIME_AFTER(xTaskGetTickCount(), last_tick_time, 3000)) {
             current_key_state = KEY_STATE_KEY2_MINUS;
-            printf("KEY2短按,进入减少模式\n");
+            LOG_INFO("KEY2短按,进入减少模式\n");
         }
         // 长按或超时进入保存配置模式
         else {
@@ -287,7 +287,7 @@ static void state_handler_key2_minus(void)
             !TIME_AFTER(xTaskGetTickCount(), last_tick_time, 3000)) {
             uint32_t new_freq = get_led_tim() - 50;
             KeyEvent_SendFreq(new_freq);
-            printf("LED_TIM - 50 = %lu\n", get_led_tim());
+            LOG_INFO("LED_TIM - 50 = %lu\n", get_led_tim());
         }
         current_key_state = KEY_STATE_CONFIG_MODE;
     }
@@ -300,7 +300,7 @@ static void state_handler_save_config(void)
 {
     KeyEvent_SendMode(LED_MODE_OFF);
     if (HAL_GPIO_ReadPin(KEY2_GPIO_Port, KEY2_Pin) == SET) {
-        printf("保存成功，返回等待按键状态。");
+        LOG_INFO("保存成功，返回等待按键状态。");
         threshold_set = 0;
         current_key_state = KEY_STATE_WAIT;
     }

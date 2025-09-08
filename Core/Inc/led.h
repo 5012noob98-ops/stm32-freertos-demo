@@ -2,6 +2,7 @@
 #define LED_H
 
 #include "main.h"
+#include "log.h"
 
 //±äÁ¿ÉùÃ÷
 typedef enum{

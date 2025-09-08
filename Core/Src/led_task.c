@@ -20,7 +20,7 @@ void Led_task_init(void){
                 &LedTaskHandle);
     if (xReturned == pdPASS)
     {
-        printf("[LED] 任务1创建成功!\r\n");
+        LOG_INFO("[LED] 任务1创建成功!\r\n");
     }
 
         xReturned = xTaskCreate(  Read_LedState_Task,
@@ -31,15 +31,13 @@ void Led_task_init(void){
                 &Read_LedState_TaskHandle);
     if (xReturned == pdPASS)
     {
-        printf("[LED] 任务2创建成功!\r\n");
+        LOG_INFO("[LED] 任务2创建成功!\r\n");
     }
     
 }
 
 void Read_LedState_Task(void *argument){
-
     LED_Event_t evt;  // 添加变量声明
-
     while (1)
     {
         

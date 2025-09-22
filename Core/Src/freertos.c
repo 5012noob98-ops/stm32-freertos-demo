@@ -107,8 +107,8 @@ void MX_FREERTOS_Init(void) {
   i2c_GXHT3L_task_init(); 
   Spi_Oled_Task_Init();
   Modbus_Task_init();
-
-
+	
+	vTaskStartScheduler();
   /* USER CODE END RTOS_THREADS */
 
   /* USER CODE BEGIN RTOS_EVENTS */

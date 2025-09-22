@@ -30,10 +30,9 @@ typedef enum{
 
 
 /* º¯ÊıÉùÃ÷ */
-void key_init(void);
+
 void key_press_handler(void);
-void reset_key_state(void);
-KeyState get_key_state(void);
+
 
 
 #endif

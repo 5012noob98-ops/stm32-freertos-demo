@@ -4,13 +4,11 @@
 #include "spi_oled.h"
 #include "FreeRTOS.h"
 #include "queue.h"
-
-
+#include "semphr.h"
 
 /* º¯ÊýÉùÃ÷ */
+
 void Spi_Oled_Task_Init(void);
 void SPI_OLED_TASK(void *argument);
 
-
 #endif
-

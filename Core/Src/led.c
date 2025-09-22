@@ -1,69 +1,85 @@
 #include "led.h"
 #include "gpio.h"
 
-/* 私有变量 */
-uint32_t led_tim = 300;      //LED闪烁时间间隔
 
+/**
+ * @brief 打开LED1
+ */
 void LED1_ON(void){
     HAL_GPIO_WritePin(GPIOA,LED1_Pin,GPIO_PIN_RESET);
 }
 
+/**
+ * @brief 打开LED2
+ */
 void LED2_ON(void){
     HAL_GPIO_WritePin(GPIOA,LED2_Pin,GPIO_PIN_RESET);
     
 }
 
+/**
+ * @brief 打开LED3
+ */
 void LED3_ON(void){
     HAL_GPIO_WritePin(GPIOA,LED3_Pin,GPIO_PIN_RESET);
     
 }
 
+/**
+ * @brief 关闭LED1
+ */
 void LED1_OFF(void){
     HAL_GPIO_WritePin(GPIOA,LED1_Pin,GPIO_PIN_SET);
     
 }
 
+/**
+ * @brief 关闭LED2
+ */
 void LED2_OFF(void){
     HAL_GPIO_WritePin(GPIOA,LED2_Pin,GPIO_PIN_SET);
     
 }
 
+/**
+ * @brief 关闭LED3
+ */
 void LED3_OFF(void){
     HAL_GPIO_WritePin(GPIOA,LED3_Pin,GPIO_PIN_SET);
     
 }
 
+/**
+ * @brief 打开所有LED
+ */
 void LED_ALL_ON(void){
     HAL_GPIO_WritePin(GPIOA,LED1_Pin|LED2_Pin|LED3_Pin,GPIO_PIN_RESET);
     
 }
 
+/**
+ * @brief 关闭所有LED
+ */
 void LED_ALL_OFF(void){
     HAL_GPIO_WritePin(GPIOA,LED1_Pin|LED2_Pin|LED3_Pin,GPIO_PIN_SET);
 }
 
+/**
+ * @brief 切换LED状态
+ * @param mode 闪烁模式
+ */
 void LED_TOGGLE(Blink_mode mode){
     
     switch (mode)
     {
     case WARNING:
         HAL_GPIO_TogglePin(GPIOA,LED3_Pin);
-    break;
+        break;
     case CONFIG:
         HAL_GPIO_TogglePin(GPIOA,LED1_Pin|LED2_Pin);
-    break;
+        break;
     case QUICK_BLINK:
         HAL_GPIO_TogglePin(GPIOA,LED1_Pin|LED2_Pin|LED3_Pin);
-    break;
+        break;
     } 
-}
-
-
-/**
- * @brief 获取LED闪烁时间间隔
- * @return 当前LED闪烁时间间隔
- */
-uint32_t get_led_tim(void)
-{
-    return led_tim;
 }

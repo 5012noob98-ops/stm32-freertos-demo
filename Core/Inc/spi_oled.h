@@ -11,9 +11,7 @@
 
 
 /* º¯ÊýÉùÃ÷ */
-static void sh1106_reset(void); //ÆÁÄ»¸´Î»
-static void sh1106_write_cmd(uint8_t chData);
-static void sh1106_write_data(uint8_t chData);
+
 void sh1106_clear_screen(void);
 void sh1106_draw_point(uint8_t chXpos, uint8_t chYpos, uint8_t chPoint);
 void sh1106_refresh_gram(void);

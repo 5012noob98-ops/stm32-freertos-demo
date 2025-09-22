@@ -1,7 +1,12 @@
 #include "spi_oled.h"
 
-uint8_t s_chDispalyBuffer[128][8]; //8*8bit=64
+/* 私有变量 */
 
+static uint8_t s_chDispalyBuffer[128][8]; // 显示缓冲区 128*64bit
+
+/**
+ * @brief SH1106显示屏复位
+ */
 static void sh1106_reset(void)
 {
         //复位屏幕
@@ -10,20 +15,29 @@ static void sh1106_reset(void)
         HAL_GPIO_WritePin(GPIOB, OLED_RES_Pin, GPIO_PIN_SET);  //RES set 
 }
 
-//发送指令
+/**
+ * @brief 向SH1106写入命令
+ * @param chData 命令数据
+ */
 static void sh1106_write_cmd(uint8_t chData) 
 {
-        HAL_GPIO_WritePin(GPIOB, OLED_DC_Pin, GPIO_PIN_RESET);//拉低DC，发送指令  
-        HAL_SPI_Transmit(&hspi3, &chData, 1, 0xff);//发送
+        HAL_GPIO_WritePin(GPIOB, OLED_DC_Pin, GPIO_PIN_RESET);  // 拉低DC，设置DC引脚为命令模式
+        HAL_SPI_Transmit(&hspi3, &chData, 1, 0xff);             // 发送命令
 }       
 
-//发送数据
+/**
+ * @brief 向SH1106写入数据
+ * @param chData 数据
+ */
 static void sh1106_write_data(uint8_t chData) 
 {
-        HAL_GPIO_WritePin(GPIOB, OLED_DC_Pin, GPIO_PIN_SET);  //拉高DC，发送数据  
-        HAL_SPI_Transmit(&hspi3, &chData, 1, 0xff);//发送
+        HAL_GPIO_WritePin(GPIOB, OLED_DC_Pin, GPIO_PIN_SET);    // 拉高DC，设置DC引脚为数据模式  
+        HAL_SPI_Transmit(&hspi3, &chData, 1, 0xff);             // 发送数据
 } 
 
+/**
+ * @brief 初始化SH1106显示屏
+ */
 void sh1106_init(void)
 {       
         sh1106_reset();
@@ -57,7 +71,10 @@ void sh1106_init(void)
         sh1106_write_cmd(0xAF);//--turn on oled panel
 }
 
-
+/**
+ * @brief 清除指定行
+ * @param page 页号 (0-7)
+ */
 void sh1106_clear_line(uint8_t page) {
     if (page >= 8) return;
     for (uint8_t x = 0; x < 128; x++) {
@@ -65,7 +82,9 @@ void sh1106_clear_line(uint8_t page) {
     }
 }
 
-
+/**
+ * @brief 清屏
+ */
 void sh1106_clear_screen(void)  
 { 
         uint8_t i, j;
@@ -82,10 +101,12 @@ void sh1106_clear_screen(void)
 }
 
 /**
-  把需要点亮的点转换为显示数组s_chDispalyBuffer的一个bit状态
-  chXpos: 绘制点的x坐标 0<= x <=127
-  chYpos: 绘制点的y坐标 0<= 7 <=63
-  chPoint: 0: 熄灭  1: 点亮 
+ * @brief 在指定位置绘制点
+ * 
+ * 把需要点亮的点转换为显示数组s_chDispalyBuffer的一个bit状态
+ * @param chXpos X坐标 (0-127)
+ * @param chYpos Y坐标 (0-63)
+ * @param chPoint 点状态: 0-清除 1-绘制
 **/
 void sh1106_draw_point(uint8_t chXpos, uint8_t chYpos, uint8_t chPoint)
 {
@@ -106,9 +127,10 @@ void sh1106_draw_point(uint8_t chXpos, uint8_t chYpos, uint8_t chPoint)
 }
 
 /**
-所有页更新到屏幕显示
-把显示数组s_chDispalyBuffer发送到屏幕显示
-**/
+ * @brief 刷新显示内容
+ * 
+ * 将显示缓冲区s_chDispalyBuffer的内容刷新到屏幕显示
+ */
 void sh1106_refresh_gram(void)
 {
         uint8_t i, j;
@@ -122,6 +144,14 @@ void sh1106_refresh_gram(void)
         }   
 }
 
+/**
+ * @brief 绘制位图
+ * @param chXpos 起始X坐标
+ * @param chYpos 起始Y坐标
+ * @param pchBmp 位图数据指针
+ * @param chWidth 位图宽度
+ * @param chHeight 位图高度
+ */
 void sh1106_draw_bitmap(uint8_t chXpos, uint8_t chYpos, const uint8_t *pchBmp, uint8_t chWidth, uint8_t chHeight)
 {
     uint16_t i, j, byteWidth = (chWidth + 7) / 8;
@@ -136,11 +166,10 @@ void sh1106_draw_bitmap(uint8_t chXpos, uint8_t chYpos, const uint8_t *pchBmp, u
 }
 
 /**
-  * @brief  OLED设置光标位置
-  * @param  Y 以左上角为原点，向下方向的坐标，范围：0~7
-  * @param  X 以左上角为原点，向右方向的坐标，范围：0~127
-  * @retval 无
-  */
+ * @brief 设置显示光标位置
+ * @param Y Y坐标，以左上为原点，向下为正方向，范围0~7
+ * @param X X坐标，以左上为原点，向右为正方向，范围0~127
+ */
 void sh1106_set_cursor(uint8_t Y, uint8_t X)
 {
 	sh1106_write_cmd(0xB0 | Y); //设置Y位置
@@ -148,14 +177,12 @@ void sh1106_set_cursor(uint8_t Y, uint8_t X)
 	sh1106_write_cmd(0x00 | (X & 0x0F)); //设置X位置低4位			
 }
 
-
 /**
-  * @brief  OLED设置字符显示
-  * @param  page 		行号，以左上角为原点，向下方向的坐标，范围：0~7
-  * @param  column 	列号，以左上角为原点，向右方向的坐标，范围：0~15
-  * @param  Char 		显示字符
-  * @retval 无
-  */
+ * @brief OLED显示字符
+ * @param page 行号，以左上为原点，向下为正方向，范围0~7
+ * @param column 列号，以左上为原点，向右为正方向，范围0~15
+ * @param Char 显示字符
+ */
 void sh1106_show_char(uint8_t page, uint8_t column, char Char) {
     uint8_t i;
     uint8_t c = Char - ' ';
@@ -169,14 +196,12 @@ void sh1106_show_char(uint8_t page, uint8_t column, char Char) {
     s_chDispalyBuffer[column * (CHARACTER_W+1) + CHARACTER_W][page] = 0x00;
 }
 
-
 /**
-  * @brief  OLED设置字符串显示
-  * @param  Line 		行号，以左上角为原点，向下方向的坐标，范围：0~7
-  * @param  Column 	列号，以左上角为原点，向右方向的坐标，范围：0~15
-  * @param  String 	显示字符串
-  * @retval 无
-  */
+ * @brief OLED显示字符串
+ * @param Line 行号，以左上为原点，向下为正方向，范围0~7
+ * @param Column 列号，以左上为原点，向右为正方向，范围0~15
+ * @param String 显示字符串
+ */
 void sh1106_show_string(uint8_t Line, uint8_t Column, char *String)
 {
 	uint8_t i;
@@ -186,4 +211,3 @@ void sh1106_show_string(uint8_t Line, uint8_t Column, char *String)
 	}
     // sh1106_refresh_gram();
 }
-

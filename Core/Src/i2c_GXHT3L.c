@@ -1,6 +1,5 @@
 #include "i2c_GXHT3L.h"
 
-
 /*  宏定义  */
 #define    GXHT3L_ADDR_WRITE    0x44<<1         //10001000 
 #define    GXHT3L_ADDR_READ     (0x44<<1)+1     //10001001
@@ -11,7 +10,7 @@
  * @param    cmd —— GXHT3L指令（在GXHT3L_MODE中枚举定义）
  * @retval    成功返回HAL_OK
 */
-uint8_t GXHT3L_Send_Cmd(GXHT3L_CMD cmd)
+static uint8_t GXHT3L_Send_Cmd(GXHT3L_CMD cmd)
 {
     uint8_t cmd_buffer[2];
     cmd_buffer[0] = cmd >> 8;
@@ -78,13 +77,14 @@ uint8_t GXHT3L_Read_Dat(uint8_t* dat)
     return HAL_I2C_Master_Receive(&hi2c2, GXHT3L_ADDR_READ, dat, 6, 0xFFFF);
 }
 
-/**
- * @brief    CRC校验
- * @param    
- * @retval    
-*/
 
-uint8_t CheckCrc8(uint8_t* const message, uint8_t initial_value)
+/**
+ * @brief CRC校验
+ * @param message 输入 需要校验的数据
+ * @param initial_value 输入 初始值
+ * @retval CRC校验结果
+ */
+static uint8_t CheckCrc8(uint8_t* const message, uint8_t initial_value)
 {
     uint8_t  remainder;        //余数
     uint8_t  i = 0, j = 0;  //循环变量
@@ -112,11 +112,13 @@ uint8_t CheckCrc8(uint8_t* const message, uint8_t initial_value)
 }
 
 /**
- * @brief    将GXHT3L接收的6个字节数据进行CRC校验，并转换为温度值和湿度值
- * @param    dat  —— 存储接收数据的地址（6个字节数组）
- * @retval    校验成功  —— 返回0
- *             校验失败  —— 返回1，并设置温度值和湿度值为0
-*/
+ * @brief 将GXHT3L接收到的6字节数据进行CRC校验，并转换为温度值和湿度值
+ * @param dat  输入 存储原始数据的地址（6字节数组）
+ * @param temperature 输出 温度值指针
+ * @param humidity 输出 湿度值指针
+ * @retval 校验成功 返回 0
+ *         校验失败 返回 1，同时温度值和湿度值为0
+ */
 uint8_t GXHT3L_Dat_To_Float(uint8_t* const dat, float* temperature, float* humidity)
 {
     uint16_t recv_temperature = 0;

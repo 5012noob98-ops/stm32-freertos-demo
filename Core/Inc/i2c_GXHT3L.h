@@ -10,14 +10,18 @@
 
 /* 函数变量 */
 
+/**
+ * @brief GXHT3L传感器命令枚举定义
+ */
 typedef enum
 {
     /* 软件复位命令 */
-
     SOFT_RESET_CMD = 0x30A2,    
+
     /* 加热使能/禁能命令 */
     PREHEAT_ENABLE_CMD = 0x306D,
     PREHEAT_DISENABLE_CMD = 0x3066,
+
     /* 芯片状态命令 */
     DEVICE_STATUS_CMD = 0xF32D,
     
@@ -53,25 +57,18 @@ typedef enum
     HIGH_10_CMD    = 0x2737,
     MEDIUM_10_CMD  = 0x2721,
     LOW_10_CMD     = 0x272A,
+
     /* 周期测量模式读取数据命令 */
     READOUT_FOR_PERIODIC_MODE = 0xE000,
 } GXHT3L_CMD;
 
-
 /* 函数声明 */
+
 uint8_t GXHT3L_Init(void);                                          //初始化GXHT3L
 void GXHT3L_Reset(void);                                            //复位GXHT3L
 void GXHT3L_Preheat_Disable(void);                                  //禁用GXHT3L的加热
 uint8_t GXHT3L_Read_Status(uint8_t* dat);                           //读取GXHT3L内部状态寄存器
-uint8_t GXHT3L_Send_Cmd(GXHT3L_CMD cmd);                            //向GXHT3L发送一条指令(16bit)
 uint8_t GXHT3L_Read_Dat(uint8_t* dat);                              //从GXHT3L读取一次数据
-uint8_t CheckCrc8(uint8_t* const message, uint8_t initial_value);   //CRC校验
 uint8_t GXHT3L_Dat_To_Float(uint8_t* const dat, float* temperature, float* humidity);//将GXHT3L接收的6个字节数据进行CRC校验，并转换为温度值和湿度值
 
-
-
-
-
-
 #endif
-
